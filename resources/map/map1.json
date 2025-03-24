@@ -1,0 +1,21 @@
+{
+  "len": 50,
+  "player": {
+    "speed": 10
+  },
+  "enemies": [
+    10,
+    20,
+    30
+  ],
+  "objects": [
+    {
+      "type": "power-up",
+      "pos": 15
+    },
+    {
+      "type": "projectile",
+      "pos": 25
+    }
+  ]
+}
