@@ -1,0 +1,24 @@
+<game>
+    <property name="len">20</property>
+    <entity type="player">
+        <property name="speed">6</property>
+    </entity>
+    <array name="enemies" type="enemy">
+        <entity type="enemy">
+            <property name="pos">10</property>
+        </entity>
+        <entity type="enemy">
+            <property name="pos">20</property>
+        </entity>
+    </array>
+    <array name="objects" type="objects">
+        <entity type="object">
+            <property name="object-type">power-up</property>
+            <property name="pos">15</property>
+        </entity>
+        <entity type="object">
+            <property name="object-type">projectile</property>
+            <property name="pos">5</property>
+        </entity>
+    </array>
+</game>

@@ -3,7 +3,7 @@
   "player": {
     "speed": 10
   },
-  "enemies": [
+  "enemies-cords": [
     10,
     20,
     30

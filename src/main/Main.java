@@ -5,13 +5,19 @@ import java.awt.*;
 import java.io.IOException;
 
 public final class Main extends JFrame {
-    private final Game game;
-    private final Menu menu;
+    private Game game;
+    private Menu menu;
     public static Dimension FRAME_SIZE=new Dimension(1000,800);
+    public static Main instance;
 
     public Main () {
+
+    }
+
+    void init(){
         menu=new Menu(this);
         game=new Game(this);
+        game.initGame();
         try {
             initFrame();
         } catch (IOException e) {
@@ -48,7 +54,8 @@ public final class Main extends JFrame {
     }
 
     public static void main(String[] args) {
-        new Main();
+        instance=new Main();
+        instance.init();
     }
 }
 

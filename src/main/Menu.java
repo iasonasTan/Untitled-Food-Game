@@ -23,6 +23,10 @@ public final class Menu extends JPanel {
         add(startGame_button);
         add(quitApplication_button);
 
+        for (Component c: getComponents()) {
+            c.setFocusable(false);
+        }
+
         startGame_button.addActionListener(e -> main.startGame());
         quitApplication_button.addActionListener(e -> System.exit(0));
     }

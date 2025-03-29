@@ -1,9 +1,8 @@
-package entity;
+package game.entity;
 
 import main.Game;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 public abstract class Entity {
     protected int worldX, worldY;
@@ -12,7 +11,7 @@ public abstract class Entity {
     protected Rectangle collision;
     protected boolean solid;
     protected Game context;
-    protected BufferedImage[] sprites;
+    protected Image[] sprites;
 
     public Entity (Game ctx) {
         this.context=ctx;
@@ -24,5 +23,11 @@ public abstract class Entity {
 
     public boolean collides (Entity other) {
         return collision.intersects(other.collision)&& solid;
+    }
+
+    public boolean move(int stepsX, int stepsY) {
+        worldX += stepsX;
+        worldY += stepsY;
+        return true;
     }
 }

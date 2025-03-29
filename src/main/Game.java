@@ -1,17 +1,20 @@
 package main;
 
-import entity.Player;
+import game.entity.Player;
+import game.manager.KeyHandler;
+import game.manager.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
 
 public final class Game extends JPanel {
     // rules
-    public static final int TILE_SIZE=25;
+    public static final int TILE_SIZE=40;
 
     // logic
     private Thread gameThread;
     private final Main main;
+    public KeyHandler keyHandler;
 
     // components
     public TileManager tileM;
@@ -23,11 +26,11 @@ public final class Game extends JPanel {
     public Game (Main main) {
         this.main=main;
         initUI();
-        initGame();
-        loadMap();
     }
 
-    private void initGame () {
+    void initGame () {
+        keyHandler=new KeyHandler();
+        Main.instance.addKeyListener(keyHandler);
         player=new Player(this);
         tileM=new TileManager(this);
         try {
@@ -37,16 +40,9 @@ public final class Game extends JPanel {
         }
     }
 
-    private void loadMap () {
-        try {
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void initUI () {
+    void initUI () {
         add(pause_button);
+        pause_button.setFocusable(false);
         pause_button.addActionListener(ae->main.pauseGame());
     }
 
@@ -54,10 +50,12 @@ public final class Game extends JPanel {
     public void paintComponent (Graphics g) {
         g.fillRect(10,10,100,100);
         tileM.render(g);
+        player.render(g);
     }
 
     public void update () {
-        
+        tileM.update();
+        player.update();
     }
 
     public void start() {

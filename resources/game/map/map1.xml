@@ -3,7 +3,7 @@
     <entity type="player">
         <property name="speed">10</property>
     </entity>
-    <entity-array name="enemies">
+    <array name="enemies" type="enemy">
         <entity type="enemy">
             <property name="pos">10</property>
         </entity>
@@ -13,8 +13,8 @@
         <entity type="enemy">
             <property name="pos">30</property>
         </entity>
-    </entity-array>
-    <object-array name="objects">
+    </array>
+    <array name="objects" type="objects">
         <entity type="object">
             <property name="object-type">power-up</property>
             <property name="pos">15</property>
@@ -23,5 +23,5 @@
             <property name="object-type">projectile</property>
             <property name="pos">25</property>
         </entity>
-    </object-array>
+    </array>
 </game>

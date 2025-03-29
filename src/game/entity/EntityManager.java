@@ -1,19 +1,19 @@
-package entity;
+package game.entity;
 
 import main.Game;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
 public abstract class EntityManager <E extends Entity> {
-    private final List<E> entities=new ArrayList<>();
+    private final List<E> entities;
     protected final Game context;
 
-    public EntityManager (Game ctx) {
+    public EntityManager (Game ctx, List<E> list) {
         context=ctx;
+        entities=list;
     }
 
     public final void forEach (Consumer<E> consumer) {
