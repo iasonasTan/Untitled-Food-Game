@@ -1,6 +1,6 @@
 <game>
-    <property name="len">50</property>
-    <entity type="player">
+    <property name="len">100</property>
+    <entity type="player" name="player">
         <property name="speed">10</property>
     </entity>
     <array name="enemies" type="enemy">

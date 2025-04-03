@@ -18,7 +18,7 @@ public final class Menu extends JPanel {
 
     private void initUI () {
         setLayout(new FlowLayout());
-        setBackground(new Color(186, 186, 186,107));
+        setBackground(new Color(44, 44, 44, 190));
 
         add(startGame_button);
         add(quitApplication_button);

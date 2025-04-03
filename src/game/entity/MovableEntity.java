@@ -2,38 +2,51 @@ package game.entity;
 
 import main.Game;
 
-import java.util.Optional;
-
 public abstract class MovableEntity extends Entity {
     protected int currentSpeed;
     private int defaultSpeed;
+    private Direction direction;
+    protected int spriteCounter =0;
+
     private long dashTimeout=0;
     private boolean onDash=false;
+
     private boolean falling=true;
-    private int velocityDown=0;
+    private int velocityDown;
 
     public MovableEntity(Game game) {
         super(game);
     }
 
+    public Direction getDirection () {
+        return this.direction;
+    }
+
     public void fall () {
-        velocityDown=0;
-        falling=true;
+        if (context.tileM.collideD(this, Game.TILE_SIZE/3)) {
+            if (!falling) {
+                velocityDown=2;
+                falling=true;
+            }
+        }
     }
 
     @Override
     public void update () {
         if (falling) {
-            velocityDown+=1;
+            velocityDown+=2;
             falling=move(0, velocityDown);
-//            if (!falling) {
-//                move(0, -5);
-//            }
         }
+        fall();
         if (System.currentTimeMillis()>=dashTimeout&&onDash) {
             currentSpeed=defaultSpeed;
             onDash=false;
         }
+    }
+
+    public enum Direction {
+        LEFT,
+        RIGHT;
     }
 
     public void setDefaultSpeed (int speed) {
@@ -47,18 +60,28 @@ public abstract class MovableEntity extends Entity {
         dashTimeout=System.currentTimeMillis()+millis;
     }
 
-    @Override
-    public boolean move(int stepsX, int stepsY) {
+    private boolean move_private(int stepsX, int stepsY) {
         worldX += stepsX;
         worldY += stepsY;
-        Optional<Tile> tile=context.tileM.collider(this);
-        if (tile.isPresent()) {
-            worldX-=stepsX*2;
-            worldY-=stepsY*2;
+        direction=stepsX<0?Direction.LEFT:Direction.RIGHT;
+        updateRect();
+        return true;
+    }
+
+    @Override
+    public boolean move(int stepsX, int stepsY) {
+        move_private(stepsX, stepsY);
+        if (context.tileM.collider(this).isPresent()) {
+            move_private(-stepsX, -stepsY);
+            while (context.tileM.collider(this).isPresent()&&stepsX==0) {
+                worldY--;
+                rect.y=worldY;
+            }
             return false;
         }
         return true;
     }
+
 
     public boolean isOnDash () {
         return onDash;
@@ -67,4 +90,5 @@ public abstract class MovableEntity extends Entity {
     public int getCurrentSpeed() {
         return currentSpeed;
     }
+
 }

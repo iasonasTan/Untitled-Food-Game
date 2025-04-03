@@ -14,16 +14,11 @@ public final class Main extends JFrame {
 
     }
 
-    void init(){
+    void initComponents(){
         menu=new Menu(this);
         game=new Game(this);
         game.initGame();
-        try {
-            initFrame();
-        } catch (IOException e) {
-            System.out.println();
-            throw new RuntimeException(e);
-        }
+        initFrame();
     }
 
     public void pauseGame() {
@@ -37,7 +32,7 @@ public final class Main extends JFrame {
         repaint();
     }
 
-    private void initFrame () throws IOException {
+    private void initFrame () {
         setContentPane(menu);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -55,7 +50,7 @@ public final class Main extends JFrame {
 
     public static void main(String[] args) {
         instance=new Main();
-        instance.init();
+        instance.initComponents();
     }
 }
 
