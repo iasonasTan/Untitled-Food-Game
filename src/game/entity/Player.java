@@ -49,23 +49,15 @@ public final class Player extends MovableEntity {
 
     @Override
     public void update() {
-
         if (context.keyHandler.left||
                 context.keyHandler.right&&!onJump) {
 
-            spriteCounter++;
-
-            if (spriteCounter %4==0){
-                sprite_idx++;
-
-                if (sprite_idx >=sprites.length)
-                    sprite_idx =0;
-            }
+            countSprites();
         }
 
         if (onJump) {
             worldY-=velocityUp;
-            velocityUp-=2;
+            velocityUp-=1;
 
             if (velocityUp<=0)
                 onJump=false;

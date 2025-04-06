@@ -1,7 +1,7 @@
 <game>
     <property name="len">100</property>
     <entity type="player" name="player">
-        <property name="speed">10</property>
+        <property name="speed">7</property>
     </entity>
     <array name="enemies" type="enemy">
         <entity type="enemy">
@@ -12,6 +12,24 @@
         </entity>
         <entity type="enemy">
             <property name="pos">30</property>
+        </entity>
+        <entity type="enemy">
+            <property name="pos">40</property>
+        </entity>
+        <entity type="enemy">
+            <property name="pos">50</property>
+        </entity>
+        <entity type="enemy">
+            <property name="pos">60</property>
+        </entity>
+        <entity type="enemy">
+            <property name="pos">70</property>
+        </entity>
+        <entity type="enemy">
+            <property name="pos">80</property>
+        </entity>
+        <entity type="enemy">
+            <property name="pos">90</property>
         </entity>
     </array>
     <array name="objects" type="objects">

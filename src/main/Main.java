@@ -2,11 +2,10 @@ package main;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 
 public final class Main extends JFrame {
-    private Game game;
-    private Menu menu;
+    public Game game;
+    public Menu menu;
     public static Dimension FRAME_SIZE=new Dimension(1000,800);
     public static Main instance;
 
@@ -16,8 +15,6 @@ public final class Main extends JFrame {
 
     void initComponents(){
         menu=new Menu(this);
-        game=new Game(this);
-        game.initGame();
         initFrame();
     }
 
@@ -36,11 +33,14 @@ public final class Main extends JFrame {
         setContentPane(menu);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        setResizable(false);
         setSize(FRAME_SIZE);
         setVisible(true);
     }
 
-    public void startGame() {
+    public void startGame(int map) {
+        game=new Game(this);
+        game.initGame(map);
         remove(menu);
         setContentPane(game);
         revalidate();

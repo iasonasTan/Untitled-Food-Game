@@ -5,7 +5,7 @@ import main.Game;
 import javax.swing.*;
 import java.awt.*;
 
-public final class Tile extends Entity {
+public class Tile extends Entity {
     private TileSource source;
 
     @Deprecated
@@ -43,8 +43,7 @@ public final class Tile extends Entity {
                 if (random_idx>=TileSource.values().length)
                     random_idx=0;
 
-            } while (out.solid!=solid||
-                    out.topLayer!=topLayer);
+            } while (out.solid!=solid||out.topLayer!=topLayer);
             return out;
         }
 

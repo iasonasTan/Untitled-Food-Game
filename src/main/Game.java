@@ -1,7 +1,9 @@
 package main;
 
 import game.entity.Enemy;
+import game.entity.Entity;
 import game.entity.Player;
+import game.entity.Projectile;
 import game.handler.EntityManager;
 import game.handler.KeyHandler;
 import game.handler.MapHandler;
@@ -12,6 +14,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 public final class Game extends JPanel {
     // rules
@@ -27,6 +31,7 @@ public final class Game extends JPanel {
     public MapHandler tileM;
     public Player player;
     public EntityManager<Enemy> enemyM;
+    public EntityManager<Projectile> projectileManager;
 
     // gui
     private BufferedImage background_image;
@@ -41,7 +46,7 @@ public final class Game extends JPanel {
         }
     }
 
-    void initGame () {
+    void initGame (int mapID) {
         keyHandler=new KeyHandler();
         Main.instance.addKeyListener(keyHandler);
         player=new Player(this);
@@ -57,8 +62,24 @@ public final class Game extends JPanel {
                 super.update();
             }
         };
+        projectileManager=new EntityManager<>(this, new LinkedList<>()){
+            public void update () {
+                super.update();
+                entities.removeIf(projectile ->
+                        !projectile.rect.intersects(Game.SCREEN)
+                        ||tileM.collider(projectile).isPresent());
+                final Iterator<Projectile> iter=entities.iterator();
+                while (iter.hasNext()) {
+                    Entity entity=iter.next();
+                    if (entity.collides(context.player)) {
+                        System.out.println("you lose!");
+                        iter.remove();
+                    }
+                }
+            }
+        };
         try {
-            tileM.loadMap(1);
+            tileM.loadMap(mapID);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -78,12 +99,14 @@ public final class Game extends JPanel {
         tileM.render(g);
         player.render(g);
         enemyM.render(g);
+        projectileManager.render(g);
     }
 
     public void update () {
         tileM.update();
         player.update();
         enemyM.update();
+        projectileManager.update();
     }
 
     public void start() {

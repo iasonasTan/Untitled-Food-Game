@@ -45,19 +45,6 @@ public abstract class Entity {
         return (int)distance;
     }
 
-    public void updateRect () {
-        rect.x=worldX;
-        rect.y=worldY;
-        rect.width=width;
-        rect.height=height;
-    }
-
-    public boolean move(int stepsX, int stepsY) {
-        worldX += stepsX;
-        worldY += stepsY;
-        return true;
-    }
-
     @Override
     public boolean equals (Object o) {
         if (o==this)
@@ -71,11 +58,48 @@ public abstract class Entity {
                 Arrays.equals(oe.sprites, this.sprites);
     }
 
-    protected final void loadTextures(String[] textures, String texturesRoot) throws Exception {
+    protected final void loadTextures(String[] textures, String texturesRoot)
+            throws Exception {
+
         final int n=textures.length;
         sprites=new Image[n];
         for(int i=0; i<n; i++) {
             sprites[i]= ImageIO.read(getClass().getResource(texturesRoot+textures[i]));
         }
+    }
+
+    public Point getCenter () {
+        Point out=new Point(worldX, worldY);
+        out.x+=width/2;
+        out.y+=height/2;
+        return out;
+    }
+
+    public static Point follow (Point target, MovableEntity follower) {
+        final float diffX=target.x-follower.worldX;
+        final float diffY=target.y-follower.worldY;
+        final float distance=(float)Math.sqrt(diffX*diffX+diffY*diffY);
+        float directionX=0;
+        float directionY=0;
+        if (distance!=0) {
+            directionX=diffX/distance;
+            directionY=diffY/distance;
+        }
+        final float stepsX= follower.currentSpeed*directionX;
+        final float stepsY=follower.currentSpeed*directionY;
+        return new Point((int)stepsX, (int)stepsY);
+    }
+
+    public void updateRect () {
+        rect.x=worldX;
+        rect.y=worldY;
+        rect.width=width;
+        rect.height=height;
+    }
+
+    public boolean move(int stepsX, int stepsY) {
+        worldX += stepsX;
+        worldY += stepsY;
+        return true;
     }
 }

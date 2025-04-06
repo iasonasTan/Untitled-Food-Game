@@ -31,8 +31,19 @@ public abstract class MovableEntity extends Entity {
         }
     }
 
+    protected void countSprites() {
+        spriteCounter++;
+
+        if (spriteCounter %4==0){
+            sprite_idx++;
+
+            if (sprite_idx >=sprites.length)
+                sprite_idx =0;
+        }
+    }
+
     @Override
-    public void update () {
+    public void update() {
         if (falling) {
             velocityDown+=2;
             falling=move(0, velocityDown);
@@ -60,12 +71,11 @@ public abstract class MovableEntity extends Entity {
         dashTimeout=System.currentTimeMillis()+millis;
     }
 
-    private boolean move_private(int stepsX, int stepsY) {
+    private void move_private(int stepsX, int stepsY) {
         worldX += stepsX;
         worldY += stepsY;
         direction=stepsX<0?Direction.LEFT:Direction.RIGHT;
         updateRect();
-        return true;
     }
 
     @Override
@@ -73,7 +83,9 @@ public abstract class MovableEntity extends Entity {
         move_private(stepsX, stepsY);
         if (context.tileM.collider(this).isPresent()) {
             move_private(-stepsX, -stepsY);
-            while (context.tileM.collider(this).isPresent()&&stepsX==0) {
+            while (context.tileM.collider(this)
+                    .isPresent()&&stepsX==0) {
+
                 worldY--;
                 rect.y=worldY;
             }

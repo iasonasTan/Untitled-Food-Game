@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 public class EntityManager <E extends Entity> {
-    private final List<E> entities;
+    protected final List<E> entities;
     protected final Game context;
     protected final Rectangle SCREEN_EXTENDED=new Rectangle(Game.SCREEN);
 
@@ -61,7 +61,7 @@ public class EntityManager <E extends Entity> {
         });
     }
 
-    public Optional<E> collider (Entity ent) {
+    public Optional<E> collider(Entity ent) {
         for (E e: entities)
             if (e.collides(ent))
                 return Optional.of(e);

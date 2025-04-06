@@ -13,7 +13,7 @@ import java.awt.*;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-public class MapHandler extends EntityManager<Tile> {
+public final class MapHandler extends EntityManager<Tile> {
     private final KeyHandler keyH;
 
     public MapHandler(Game ctx) {
@@ -131,38 +131,5 @@ public class MapHandler extends EntityManager<Tile> {
         }
 
     };
-
-    private static void trashCode () {
-        if (1<2)
-            throw new IllegalCallerException("nobody can call this method");
-        Document document=null;
-        NodeList arrays=document.getElementsByTagName("array");
-        for (int i=0; i<arrays.getLength(); i++) {
-            Element array=(Element)arrays.item(i);
-
-            if (array.getAttribute("type").equals("enemy")&&
-                    array.getAttribute("name").equals("enemies")) {
-
-                NodeList enemies=(NodeList)array;
-                for (int j=0; j<enemies.getLength(); j++) {
-                    Element enemy_el=(Element)enemies.item(j);
-                    if (enemy_el.getAttribute("type").equals("enemy")) {
-                        NodeList enemy = (NodeList) enemies.item(j);
-
-                        for (int q = 0; q < enemy.getLength(); q++) {
-                            Element property = (Element) enemy.item(q);
-
-                            if (property.getAttribute("name").equals("pos")) {
-
-//                                context.enemyM.addEntity(new Enemy(context,
-//                                        new Point(Integer.parseInt(property.getTextContent()), 120)));
-                            }
-                        }
-                    }
-
-                }
-            }
-        }
-    }
 
 }
