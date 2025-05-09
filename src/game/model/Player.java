@@ -1,81 +1,71 @@
-package game.entity;
+package game.model;
 
 import main.Game;
 
 import java.awt.*;
 
 public final class Player extends MovableEntity {
-    /**
-     variables:
-        int worldX;
-        int worldY;
-     are:
-        int screenX;
-        int screenY;
+    /*
+     * fields:
+     *  int worldX;
+     *  int worldY;
+     * used as:
+     *  int screenX;
+     *  int screenY;
      */
 
-    private boolean onJump=false;
-    private int velocityUp;
+    // TODO Player is NOT a MovableEntity
+    // Change superclass of Player
 
     public Player(Game ctx) {
         super(ctx);
         setDefaultValues();
         try {
             loadTextures(new String[]{"1.png", "2.png", "3.png"},
-                    "/game/entity/player");
+                    "/game/model/player");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    /// return true if did jump ;]
-    public boolean jump (int height) {
-        if (onJump)
-            return false;
-
-        onJump=true;
-        velocityUp=height;
-        return true;
-    }
-
     @Override
     public void updateRect () {
-        final int GAP=15;
+        final int GAP=10;
         rect.x=worldX+GAP;
-        rect.y=worldY+GAP;
         rect.width=width-GAP*2;
+
+        rect.y=worldY+GAP;
         rect.height=height-GAP;
     }
 
     @Override
     public void update() {
         if (context.keyHandler.left||
-                context.keyHandler.right&&!onJump) {
+                context.keyHandler.right&&!isOnJump()) {
 
             countSprites();
-        }
-
-        if (onJump) {
-            worldY-=velocityUp;
-            velocityUp-=1;
-
-            if (velocityUp<=0)
-                onJump=false;
         }
 
         updateRect();
 
         if (context.keyHandler.jump) {
             context.keyHandler.jump=false;
-            jump(height/5*4);
+            jump(height/2);
         }
 
         super.update();
     }
 
     @Override
+    public boolean move(int stepsX, int stepsY) {
+        if (stepsX!=0)
+            throw new IllegalArgumentException("move map instead");
+        return super.move(stepsX, stepsY);
+    }
+
+    @Override
     public void setDefaultValues() {
-        worldX=250; // WORLD_X IS SCREEN_X
+        worldX=Game.SCREEN.width/2-width;
         worldY=100;
         rect =new Rectangle(worldX, worldY, width, height);
         solid=true;

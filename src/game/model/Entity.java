@@ -1,19 +1,19 @@
-package game.entity;
+package game.model;
 
 import main.Game;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.util.Arrays;
+import java.util.Objects;
 
 public abstract class Entity {
     // screen
     protected int worldX, worldY;
-    protected int width=Game.TILE_SIZE;
-    protected int height=Game.TILE_SIZE;
+    protected int width=Game.DEFAULT_SIZE;
+    protected int height=Game.DEFAULT_SIZE;
 
     // physics
-    public Rectangle rect;
+    protected Rectangle rect;
     protected boolean solid;
 
     // logic
@@ -25,6 +25,14 @@ public abstract class Entity {
         context=ctx;
     }
 
+    public Rectangle getRect () { return rect; }
+    public int getWorldX () { return worldX; }
+    public int getWorldY () { return worldY; }
+    public int getWidth () { return width; }
+    public int getHeight () { return height; }
+    public void setWorldX(int worldX) { this.worldX = worldX; }
+    public void setWorldY(int worldY) { this.worldY = worldY; }
+
     abstract public void update();
     abstract public void setDefaultValues();
 
@@ -32,9 +40,29 @@ public abstract class Entity {
         g.drawImage(sprites[sprite_idx], worldX, worldY, width, height, null);
     }
 
-    public boolean collides (Entity other) {
-        return rect.intersects(other.rect)&&
-                solid&&other.solid;
+    public Side getCollideSide(Entity other) {
+        Rectangle ore=other.rect;
+        if (!rect.intersects(ore)||!solid||!other.solid) return Side.NONE;
+
+        int dx1 = rect.x+rect.width-ore.x;
+        int dx2 = ore.x+ore.width-rect.x;
+        int dy1 = rect.y+rect.height-ore.y;
+        int dy2 = ore.y+ore.height-rect.y;
+
+        int overlapX = Math.min(dx1, dx2);
+        int overlapY = Math.min(dy1, dy2);
+
+        Side out;
+        if (overlapX < overlapY)
+            out = (rect.x<ore.x)?Side.RIGHT:Side.LEFT;
+        else
+            out = (rect.y<ore.y)?Side.DOWN:Side.UP;
+
+        return out;
+    }
+
+    public boolean collides(Entity other) {
+        return solid&&other.solid&&other.rect.intersects(rect);
     }
 
     public int distance (Entity other) {
@@ -46,25 +74,30 @@ public abstract class Entity {
     }
 
     @Override
-    public boolean equals (Object o) {
-        if (o==this)
-            return true;
-        return o instanceof Entity oe &&
-                oe.worldX == this.worldX &&
-                oe.worldY == this.worldY &&
-                oe.rect.equals(this.rect) &&
-                oe.height == this.height &&
-                oe.width == this.height &&
-                Arrays.equals(oe.sprites, this.sprites);
+    public int hashCode() {
+        return Objects.hash(width, height, worldX, worldY);
     }
 
+    @Override
+    public boolean equals (Object o) {
+        if (o==this) return true;
+        if (o==null) return false;
+        if (o.getClass()!=this.getClass()) return false;
+
+        Entity oe = (Entity) o;
+        return oe.worldX == worldX && oe.worldY == worldY &&
+                oe.height == height && oe.width == height;
+    }
+
+    @SuppressWarnings("all")
     protected final void loadTextures(String[] textures, String texturesRoot)
             throws Exception {
 
         final int n=textures.length;
         sprites=new Image[n];
         for(int i=0; i<n; i++) {
-            sprites[i]= ImageIO.read(getClass().getResource(texturesRoot+textures[i]));
+            sprites[i]= ImageIO.read(getClass().getResource(
+                    texturesRoot+textures[i]));
         }
     }
 
@@ -101,5 +134,23 @@ public abstract class Entity {
         worldX += stepsX;
         worldY += stepsY;
         return true;
+    }
+
+    public enum Side {
+        NONE,
+        LEFT,
+        RIGHT,
+        UP,
+        DOWN;
+
+        public static Side opposite(Side d) {
+            return switch(d) {
+                case UP -> DOWN;
+                case DOWN -> UP;
+                case LEFT -> RIGHT;
+                case RIGHT -> LEFT;
+                default -> NONE;
+            };
+        }
     }
 }

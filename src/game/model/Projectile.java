@@ -1,6 +1,7 @@
-package game.entity;
+package game.model;
 
 import main.Game;
+import main.Main;
 
 import java.awt.*;
 
@@ -14,7 +15,7 @@ public class Projectile extends MovableEntity {
         worldY=parent_obj.worldY+height/2;
         try {
             loadTextures(new String[]{"red.png", "green.png"},
-                    "/game/entity/");
+                    "/game/model/");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -26,7 +27,10 @@ public class Projectile extends MovableEntity {
     public void update () {
         //super.update();
         countSprites();
-        move(steps.x, steps.y);
+        move_unsafe(steps.x, steps.y);
+        if (context.player.collides(this)) {
+            Main.getInstance().gameOver();
+        }
     }
 
     @Override
@@ -34,7 +38,7 @@ public class Projectile extends MovableEntity {
         solid=true;
         width/=2;
         height/=2;
-        setDefaultSpeed(40);
+        setDefaultSpeed(10);
         rect=new Rectangle(worldX, worldY, width, height);
     }
 }

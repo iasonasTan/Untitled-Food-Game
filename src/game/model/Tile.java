@@ -1,4 +1,4 @@
-package game.entity;
+package game.model;
 
 import main.Game;
 
@@ -6,7 +6,6 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Tile extends Entity {
-    private TileSource source;
 
     @Deprecated
     public Tile(Game ctx, String res, boolean solid, int worldX, int worldY) {
@@ -19,7 +18,6 @@ public class Tile extends Entity {
 
     public Tile (Game ctx, TileSource sources, int x, int y) {
         super(ctx);
-        this.source=sources;
         this.worldX=x;
         this.worldY=y;
         this.solid=sources.solid;
@@ -32,7 +30,8 @@ public class Tile extends Entity {
         AIR("/game/tiles/sky.png", false, true),
         GRASS("/game/tiles/grass.jpeg", true, true),
         STONE("/game/tiles/stone.jpg", true, false),
-        WATER("/game/tiles/water.jpeg", false, true);
+        WATER("/game/tiles/water.jpeg", false, true),
+        PORTAL("/game/tiles/portal.png", false, false);
 
         public static TileSource random (boolean solid, boolean topLayer) {
             int random_idx=(int)(Math.random()*TileSource.values().length);
@@ -64,18 +63,18 @@ public class Tile extends Entity {
         rect.y=worldY;
     }
 
+    @SuppressWarnings("all")
     @Override
     public void setDefaultValues() {
+        width=Game.DEFAULT_SIZE;
+        height=width;
         rect =new Rectangle(worldX, worldY, width, height);
     }
 
+    @SuppressWarnings("all")
     public void loadImage (String res) {
         sprites=new Image[1];
         sprites[0]=new ImageIcon(getClass().getResource(res)).getImage();
-    }
-
-    public TileSource getSource () {
-        return source;
     }
 
 }
