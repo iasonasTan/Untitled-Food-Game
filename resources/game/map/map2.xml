@@ -1,33 +1,11 @@
 <game>
-    <property name="len">70</property>
+    <property name="len">50</property>
     <entity type="player">
         <property name="speed">7</property>
     </entity>
     <array name="enemies" type="enemy">
         <entity type="enemy">
             <property name="pos">10</property>
-        </entity>
-        <entity type="enemy">
-            <property name="pos">22</property>
-        </entity>
-        <entity type="enemy">
-            <property name="pos">35</property>
-        </entity>
-        <entity type="enemy">
-            <property name="pos">45</property>
-        </entity>
-        <entity type="enemy">
-            <property name="pos">60</property>
-        </entity>
-    </array>
-    <array name="objects" type="objects">
-        <entity type="object">
-            <property name="object-type">power-up</property>
-            <property name="pos">15</property>
-        </entity>
-        <entity type="object">
-            <property name="object-type">projectile</property>
-            <property name="pos">5</property>
         </entity>
     </array>
 </game>

@@ -1,12 +1,14 @@
-package game.entity;
+package game.model;
 
+import game.handler.MapHandler;
 import main.Game;
 
 import java.awt.*;
 
 public final class Enemy extends MovableEntity {
-    private boolean activated=false;
-    private final long THROW_DELAY_MS=1200; // ms
+    private boolean sleeping =true;
+    @SuppressWarnings("all")
+    private final long THROW_DELAY_MS=2400; // ms
     private long previousThrowTime_ms=System.currentTimeMillis();
 
     public Enemy(Game ctx, Point pos) {
@@ -16,41 +18,41 @@ public final class Enemy extends MovableEntity {
         setDefaultValues();
         try {
             loadTextures(new String[]{"1.png", "2.png", "3.png"},
-                    "/game/entity/enemy");
+                    "/game/model/enemy");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public boolean move (int stepsX, int stepsY) {
-//        projectileManager.move(stepsX, stepsY);
-        return super.move(stepsX, stepsY);
-    }
-
-    @Override
     public void updateRect () {
-        final int GAP=15;
+        final int GAP=5;
         rect.x=worldX+GAP;
-        rect.y=worldY+GAP;
         rect.width=width-GAP*2;
+
+        rect.y=worldY+GAP;
         rect.height=height-GAP;
     }
 
     @Override
     public void render (Graphics g) {
-        activated=true;
+        sleeping =false;
         super.render(g);
     }
 
     public void attackPlayer () {
-        context.projectileManager.addEntity(new Projectile(context, this, context.player));
+        Projectile projectile=new Projectile(context, this, context.player);
+        context.projectilesMan.addEntity(projectile);
     }
 
     @Override
     public void update() {
-        if (!activated||!context.tileM.collideD(this, 20))
+        if (sleeping)
             return;
+
+        if (MapHandler.FLOOR * Game.DEFAULT_SIZE < this.worldY+height) {
+            jump(height);
+        }
 
         if (previousThrowTime_ms+THROW_DELAY_MS<=System.currentTimeMillis()) {
             previousThrowTime_ms=System.currentTimeMillis();

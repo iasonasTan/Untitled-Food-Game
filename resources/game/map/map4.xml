@@ -1,0 +1,48 @@
+<game>
+    <property name="len">92</property>
+    <entity type="player">
+        <property name="speed">9</property>
+    </entity>
+    <array name="enemies" type="enemy">
+        <entity type="enemy">
+            <property name="pos">10</property>
+        </entity>
+        <entity type="enemy">
+            <property name="pos">22</property>
+        </entity>
+        <entity type="enemy">
+            <property name="pos">35</property>
+        </entity>
+        <entity type="enemy">
+            <property name="pos">45</property>
+        </entity>
+        <entity type="enemy">
+            <property name="pos">60</property>
+        </entity>
+        <entity type="enemy">
+            <property name="pos">85</property>
+        </entity>
+    </array>
+    <array type="structure" name="structures">
+        <entity type="structure">
+            <property name="width">40</property>
+            <property name="height">5</property>
+            <property name="pos">20</property>
+        </entity>
+        <entity type="structure">
+            <property name="width">33</property>
+            <property name="height">3</property>
+            <property name="pos">40</property>
+        </entity>
+    </array>
+    <array name="objects" type="objects">
+        <entity type="object">
+            <property name="object-type">power-up</property>
+            <property name="pos">15</property>
+        </entity>
+        <entity type="object">
+            <property name="object-type">projectile</property>
+            <property name="pos">5</property>
+        </entity>
+    </array>
+</game>

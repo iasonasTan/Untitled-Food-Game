@@ -4,8 +4,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class KeyHandler implements KeyListener {
-    public boolean jump, s_key_blank, left, right;
-    public boolean space, shift;
+    public volatile boolean s_key_blank, left, right;
+    public volatile boolean shift, jump;
 
     @Override public void keyTyped(KeyEvent e) {}
 
@@ -13,11 +13,15 @@ public class KeyHandler implements KeyListener {
     public void keyPressed(KeyEvent e) {
         final int CODE = e.getKeyCode();
         switch (CODE) {
-            case KeyEvent.VK_W -> jump =true;
-            case KeyEvent.VK_S -> s_key_blank =true;
-            case KeyEvent.VK_A -> left=true;
-            case KeyEvent.VK_D -> right=true;
-            case KeyEvent.VK_SPACE -> space=true;
+            case KeyEvent.VK_S,
+                 KeyEvent.VK_DOWN -> s_key_blank =true;
+            case KeyEvent.VK_A,
+                 KeyEvent.VK_LEFT-> left=true;
+            case KeyEvent.VK_D,
+                 KeyEvent.VK_RIGHT-> right=true;
+            case KeyEvent.VK_SPACE,
+                 KeyEvent.VK_W,
+                 KeyEvent.VK_UP  -> jump =true;
             case KeyEvent.VK_SHIFT -> shift=true;
         }
     }
@@ -26,11 +30,15 @@ public class KeyHandler implements KeyListener {
     public void keyReleased(KeyEvent e) {
         final int CODE = e.getKeyCode();
         switch (CODE) {
-            case KeyEvent.VK_W -> jump =false;
-            case KeyEvent.VK_S -> s_key_blank =false;
-            case KeyEvent.VK_A -> left=false;
-            case KeyEvent.VK_D -> right=false;
-            case KeyEvent.VK_SPACE -> space=false;
+            case KeyEvent.VK_S,
+                 KeyEvent.VK_DOWN-> s_key_blank =false;
+            case KeyEvent.VK_A,
+                 KeyEvent.VK_LEFT -> left=false;
+            case KeyEvent.VK_D,
+                 KeyEvent.VK_RIGHT -> right=false;
+            case KeyEvent.VK_SPACE,
+                 KeyEvent.VK_W,
+                 KeyEvent.VK_UP -> jump =false;
             case KeyEvent.VK_SHIFT -> shift=false;
         }
     }

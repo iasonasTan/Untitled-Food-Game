@@ -1,12 +1,11 @@
 package main;
 
-import game.entity.Enemy;
-import game.entity.Entity;
-import game.entity.Player;
-import game.entity.Projectile;
 import game.handler.EntityManager;
 import game.handler.KeyHandler;
 import game.handler.MapHandler;
+import game.model.Enemy;
+import game.model.Player;
+import game.model.Projectile;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -14,31 +13,29 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 public final class Game extends JPanel {
     // rules
-    public static final int TILE_SIZE=50;
+    public static final int DEFAULT_SIZE =50;
     public static final Rectangle SCREEN=new Rectangle(Main.FRAME_SIZE);
 
     // logic
     private Thread gameThread;
-    private final Main main;
     public KeyHandler keyHandler;
+    private boolean running =false;
 
     // components
-    public MapHandler tileM;
+    public MapHandler map;
     public Player player;
-    public EntityManager<Enemy> enemyM;
-    public EntityManager<Projectile> projectileManager;
+    public EntityManager<Enemy> enemiesMan;
+    public EntityManager<Projectile> projectilesMan;
 
     // gui
     private BufferedImage background_image;
     private final JButton pause_button=new JButton("pause");
 
-    public Game (Main main) {
-        this.main=main;
+    public Game () {
         try {
             initUI();
         } catch (IOException e) {
@@ -46,80 +43,100 @@ public final class Game extends JPanel {
         }
     }
 
-    void initGame (int mapID) {
+    public void initGame(int mapID) {
         keyHandler=new KeyHandler();
-        Main.instance.addKeyListener(keyHandler);
+        Main.getInstance().getWindow().addKeyListener(keyHandler);
         player=new Player(this);
-        tileM=new MapHandler(this);
-        enemyM= new EntityManager<>(this, new ArrayList<>()){
-            @Override
-            public void update() {
-                if (keyHandler.left) {
-                    enemyM.move(player.getCurrentSpeed(), 0);
-                } else if (keyHandler.right) {
-                    enemyM.move(-player.getCurrentSpeed(), 0);
-                }
-                super.update();
-            }
-        };
-        projectileManager=new EntityManager<>(this, new LinkedList<>()){
+        map =new MapHandler(this);
+        enemiesMan = new EntityManager<>(this, new ArrayList<>());
+        projectilesMan =new EntityManager<>(this, new LinkedList<>()){
             public void update () {
                 super.update();
                 entities.removeIf(projectile ->
-                        !projectile.rect.intersects(Game.SCREEN)
-                        ||tileM.collider(projectile).isPresent());
-                final Iterator<Projectile> iter=entities.iterator();
-                while (iter.hasNext()) {
-                    Entity entity=iter.next();
-                    if (entity.collides(context.player)) {
-                        System.out.println("you lose!");
-                        iter.remove();
-                    }
-                }
+                        !projectile.getRect().intersects(Game.SCREEN)
+                        || map.collider(projectile).isPresent()||
+                        projectile.collides(context.player));
             }
         };
         try {
-            tileM.loadMap(mapID);
+            map.loadMap(mapID);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
+    @SuppressWarnings("all")
     void initUI () throws IOException {
         background_image= ImageIO.read(getClass().getResource("/menu/background.png"));
         add(pause_button);
         pause_button.setFocusable(false);
-        pause_button.addActionListener(ae->main.pauseGame());
+        pause_button.addActionListener(ae->Main.getInstance().pauseGame());
     }
 
     @Override
     public void paintComponent (Graphics g) {
         super.paintComponent(g);
-        //g.drawImage(background_image, 0, 0, Main.FRAME_SIZE.width, Main.FRAME_SIZE.height, null);
-        tileM.render(g);
+        g.drawImage(background_image, 0, 0, Main.FRAME_SIZE.width, Main.FRAME_SIZE.height, null);
+        map.render(g);
         player.render(g);
-        enemyM.render(g);
-        projectileManager.render(g);
+        enemiesMan.render(g);
+        projectilesMan.render(g);
     }
 
     public void update () {
-        tileM.update();
+        map.update();
         player.update();
-        enemyM.update();
-        projectileManager.update();
+        enemiesMan.update();
+        projectilesMan.update();
+
+        if (player.getWorldY()>Game.SCREEN.height) {
+            gameThread=null; // STOP GAME THREAD
+            final int MAP_LEFT_X= map.getLeftTopMapTile().getWorldX();
+            final int MAP_RIGHT_X= map.getRightTopMapTile().getWorldX();
+            final int PLAYER_X=player.getWorldX();
+            String message="GameOver, ";
+            if (PLAYER_X<MAP_LEFT_X||PLAYER_X>MAP_RIGHT_X) {
+                message+="you lose";
+                Main.getInstance().startGame();
+            }
+            if (PLAYER_X>MAP_LEFT_X&&PLAYER_X<MAP_RIGHT_X) {
+                message+="you won";
+                Main.getInstance().nextLevel();
+            }
+            //Main.getInstance().gameOver();
+            Main.getInstance().pauseGame();
+            JOptionPane.showMessageDialog(this, message);
+        }
     }
 
-    public void start() {
+    public static abstract sealed class GameController permits Main {
+        protected void stopGame(Game g) {
+            g.stop();
+        }
+        protected void startGame(Game g) {
+            g.start();
+        }
+        protected void resumeGame(Game g) {
+            g.resume();
+        }
+
+    }
+
+    private void stop() {
+        gameThread=null;
+        remove(pause_button);
+    }
+
+    private void start() {
+        running =true;
         gameThread=new Thread(this::loop);
         gameThread.start();
         add(pause_button);
     }
 
-    public void stop() {
-        gameThread=null;
-        remove(pause_button);
-    }
+    private void resume() { start(); }
 
+    @SuppressWarnings("all")
     public void loop () {
         long wait, diff, prev, curr;
         final long TARGET_FPS=60;
@@ -129,6 +146,7 @@ public final class Game extends JPanel {
 
             update();
             repaint();
+            paintImmediately(0, 0, getWidth(), getHeight());
 
             curr=System.currentTimeMillis();
             diff=curr-prev;
@@ -142,4 +160,7 @@ public final class Game extends JPanel {
         }
     }
 
+    public boolean isRunning() {
+        return running;
+    }
 }
